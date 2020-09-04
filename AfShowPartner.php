@@ -6,6 +6,7 @@ use Shopware\Components\Plugin;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Shopware-Plugin AfShowPartner.
@@ -25,19 +26,20 @@ class AfShowPartner extends Plugin
     public static function getSubscribedEvents(){
         return[
             'Enlight_Controller_Action_PostDispatch_Frontend' => 'onFrontend',
+            'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJs',
         ];
     }
 
     public function install(InstallContext $install){
         $service = $this->container->get('shopware_attribute.crud_service');
 
-        $service->update('s_user_attributes', 'afpartnername', 'text', [
-            'label' => 'Parter Name',
-            'supportText' => 'Zeigt den Namen des Partners wenn sein Link bentutz wurde',
-            'helpText' => 'Zeigt den Namen des Partners wenn sein Link bentutz wurde',
-            'position' => -100,
+        $service->update('s_emarketing_partner_attributes', 'afpartnernameactive', 'boolean', [
+            'label' => 'Aktivieren?',
+            'supportText' => 'Aktiviere Partneranzeige',
+            'position' => -110,
             'displayInBackend' => true
         ]);
+
         $service->update('s_emarketing_partner_attributes', 'afpartnername', 'text', [
             'label' => 'Parter Name',
             'supportText' => 'Zeigt den Namen des Partners wenn sein Link bentutz wurde',
@@ -71,16 +73,26 @@ class AfShowPartner extends Plugin
         $view = $controller->View();
         $view->addTemplateDir($this->getPath() . "/Resources/views/");
 
+
+        // TODO: Read the cookie to get the partner name - so the
+        // banner always shows the partner information
+        // This doesnt work - cauz secured
+        // dumP($controller->Request()->cookies->parameters);
+        // another way would be to go over localstorage
+
+
         $partnerLink = $request->getRequestUri();
-        $partnerCode = str_replace("/?sPartner=", "", $partnerLink);
-        $partnerId = $this->checkIfHasName($partnerCode);
-        $partnerViewName = $this->getPartnerViewName($partnerId);
-        $imageId = $this->getPartnerImage($partnerId);
-        $view->assign('afPartnerName', array(
-            'name' => $partnerViewName,
-            'image' => $imageId
-        )
-        );
+        if(strpos($partnerLink, '/?sPartner') !== false){
+            $partnerCode = str_replace("/?sPartner=", "", $partnerLink);
+            $partnerId = $this->checkIfHasName($partnerCode);
+            $partnerViewName = $this->getPartnerViewName($partnerId);
+            $imageId = $this->getPartnerImage($partnerId);
+            $view->assign('afPartnerName', array(
+                'name' => $partnerViewName,
+                'image' => $imageId
+            )
+            );
+        }
     }
 
     public function checkIfHasName($partnerCode){
@@ -105,5 +117,12 @@ class AfShowPartner extends Plugin
         $imageId = $connection->fetchCol($getImage);
 
         return $imageId['0'];
+    }
+
+    public function onCollectJs(){
+        $collection = new ArrayCollection();
+        $collection->add($this->getPath() . '/Resources/views/frontend/_public/src/js/main.js');
+
+        return $collection;
     }
 }
