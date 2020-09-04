@@ -4,10 +4,10 @@
     <label lang="de">AfShowPartner</label>
     <label lang="en">AfShowPartner</label>
     <version>1.0.0</version>
-    <copyright>(c) by Shopware AG</copyright>
+    <copyright>(c) by Alexander Fröhling</copyright>
     <license>proprietary</license>
-    <link>http://store.shopware.com</link>
-    <author>Shopware AG</author>
+    <link>mailto:alexander.froehling@googlemail.com</link>
+    <author>Alexander Froehling</author>
 
     <compatibility minVersion="5.2.0" />
 
