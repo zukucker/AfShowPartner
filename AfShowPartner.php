@@ -32,6 +32,7 @@ class AfShowPartner extends Plugin
 
     public function install(InstallContext $install){
         $service = $this->container->get('shopware_attribute.crud_service');
+        $connection = Shopware()->Db();
 
         $service->update('s_emarketing_partner_attributes', 'afpartnernameactive', 'boolean', [
             'label' => 'Aktivieren?',
@@ -60,6 +61,12 @@ class AfShowPartner extends Plugin
             'translatable'     => false,
           ]
         );
+
+        $table = "CREATE TABLE `live`.`af_show_partner`
+            ( `id` INT NOT NULL AUTO_INCREMENT , `partnerId` INT NOT NULL , `partnerLink` VARCHAR(255) NOT NULL ,
+            `name` VARCHAR(255) NOT NULL, `sessionId` INT NOT NULL,  PRIMARY KEY (`id`)) ENGINE = InnoDB";
+
+        $connection->query($table);
     }
 
     public function uninstall(UninstallContext $install){
@@ -74,24 +81,20 @@ class AfShowPartner extends Plugin
         $view->addTemplateDir($this->getPath() . "/Resources/views/");
 
 
-        // TODO: Read the cookie to get the partner name - so the
-        // banner always shows the partner information
-        // This doesnt work - cauz secured
-        // dumP($controller->Request()->cookies->parameters);
-        // another way would be to go over localstorage
-
-
         $partnerLink = $request->getRequestUri();
         if(strpos($partnerLink, '/?sPartner') !== false){
             $partnerCode = str_replace("/?sPartner=", "", $partnerLink);
             $partnerId = $this->checkIfHasName($partnerCode);
             $partnerViewName = $this->getPartnerViewName($partnerId);
             $imageId = $this->getPartnerImage($partnerId);
+            $sessionId = Shopware()->Session()->get("sessionId");
             $view->assign('afPartnerName', array(
                 'name' => $partnerViewName,
                 'image' => $imageId
-            )
+                )
             );
+
+            $this->writePartner($partnerId['0'], $partnerLink, $partnerViewName, $sessionId);
         }
     }
 
@@ -125,4 +128,27 @@ class AfShowPartner extends Plugin
 
         return $collection;
     }
+
+    public function writePartner($partnerId, $partnerLink, $name, $sessionId){
+        $connection = Shopware()->Db();
+
+        $select = "SELECT * FROM af_show_partner WHERE sessionId = '".$sessionId."'";
+        $hasEntry = $connection->fetchAll($select);
+
+        if(!$hasEntry){
+            $insert = "INSERT INTO af_show_partner (id,partnerId, partnerLink, name, sessionId)
+                VALUES ( null, '".$partnerId."', '".$partnerLink."', '".$name."', '".$sessionId."')";
+            $connection->query($insert);
+        }else{
+            return;
+        }
+    }
 }
+
+
+//just like this array on every page where it is needed to show
+    //$view->assign('afPartnerName', array(
+    //'name' => $partnerViewName,
+    //'image' => $imageId
+    //)
+//);
