@@ -80,7 +80,6 @@ class AfShowPartner extends Plugin
         $view = $controller->View();
         $view->addTemplateDir($this->getPath() . "/Resources/views/");
 
-
         $partnerLink = $request->getRequestUri();
         if(strpos($partnerLink, '/?sPartner') !== false){
             $partnerCode = str_replace("/?sPartner=", "", $partnerLink);

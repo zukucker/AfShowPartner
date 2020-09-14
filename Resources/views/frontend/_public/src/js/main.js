@@ -8,8 +8,8 @@ function init() {
     var partner = partnerWith.replace(proto, '');
     var partnerlink = (partner.substring(2,999));
 
-    console.error(partnerlink);
+    //console.error(partnerlink);
     localStorage.setItem('partnerLink', JSON.stringify(partnerlink))
 
-    console.error(localStorage);
+    //console.error(localStorage);
 }
