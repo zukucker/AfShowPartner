@@ -27,6 +27,7 @@ class AfShowPartner extends Plugin
         return[
             'Enlight_Controller_Action_PostDispatch_Frontend' => 'onFrontend',
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJs',
+            'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLess',
         ];
     }
 
@@ -62,7 +63,7 @@ class AfShowPartner extends Plugin
           ]
         );
 
-        $table = "CREATE TABLE `live`.`af_show_partner`
+        $table = "CREATE TABLE `af_show_partner`
             ( `id` INT NOT NULL AUTO_INCREMENT , `partnerId` INT NOT NULL , `partnerLink` VARCHAR(255) NOT NULL ,
             `name` VARCHAR(255) NOT NULL, `sessionId` INT NOT NULL,  PRIMARY KEY (`id`)) ENGINE = InnoDB";
 
@@ -78,9 +79,12 @@ class AfShowPartner extends Plugin
         $controller = $args->getSubject();
         $request = $args->getRequest();
         $view = $controller->View();
+
         $view->addTemplateDir($this->getPath() . "/Resources/views/");
+        $view->Template()->addPluginsDir($this->getPath(). '/Resources/views/_private/smarty/');
 
         $partnerLink = $request->getRequestUri();
+
         if(strpos($partnerLink, '/?sPartner') !== false){
             $partnerCode = str_replace("/?sPartner=", "", $partnerLink);
             $partnerId = $this->checkIfHasName($partnerCode);
@@ -142,12 +146,11 @@ class AfShowPartner extends Plugin
             return;
         }
     }
+
+    public function onCollectLess()
+    {
+        return new \Shopware\Components\Theme\LessDefinition(
+            [], [$this->getPath() . '/Resources/views/frontend/_public/src/less/main.less']
+        );
+    }
 }
-
-
-//just like this array on every page where it is needed to show
-    //$view->assign('afPartnerName', array(
-    //'name' => $partnerViewName,
-    //'image' => $imageId
-    //)
-//);
