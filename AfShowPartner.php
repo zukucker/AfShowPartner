@@ -38,13 +38,28 @@ class AfShowPartner extends Plugin
         ];
     }
 
+    //public function addComfortCookie(): CookieCollection
+    //{
+        //$collection = new CookieCollection();
+        //$collection->add(new CookieStruct(
+            //'partnertracking',
+            //'/^partnertracking$/',
+            //'Partneranzeige im Headbereich',
+            //CookieGroupStruct::COMFORT
+        //));
+
+        //return $collection;
+    //}
+
     public function addComfortCookie(): CookieCollection
     {
+        $pluginNamespace = $this->container->get('snippets')->getNamespace('my_plugins_snippet_namespace');
+
         $collection = new CookieCollection();
         $collection->add(new CookieStruct(
-            'partnertracking',
-            '/^partnertracking$/',
-            'Partneranzeige im Headbereich',
+            'allow_local_storage',
+            '/^match_no_cookie_DJ7ra9WMy8$/',
+            'Statistische Daten in den LocalStorage speichern',
             CookieGroupStruct::COMFORT
         ));
 
