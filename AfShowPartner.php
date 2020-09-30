@@ -8,6 +8,12 @@ use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Doctrine\Common\Collections\ArrayCollection;
 
+/** Cookie Stuff */
+use Shopware\Bundle\CookieBundle\CookieCollection;
+use Shopware\Bundle\CookieBundle\Structs\CookieGroupStruct;
+use Shopware\Bundle\CookieBundle\Structs\CookieStruct;
+
+
 /**
  * Shopware-Plugin AfShowPartner.
  */
@@ -28,7 +34,21 @@ class AfShowPartner extends Plugin
             'Enlight_Controller_Action_PostDispatch_Frontend' => 'onFrontend',
             'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJs',
             'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLess',
+            'CookieCollector_Collect_Cookies' => 'addComfortCookie',
         ];
+    }
+
+    public function addComfortCookie(): CookieCollection
+    {
+        $collection = new CookieCollection();
+        $collection->add(new CookieStruct(
+            'partnertracking',
+            '/^partnertracking$/',
+            'Partneranzeige im Headbereich',
+            CookieGroupStruct::COMFORT
+        ));
+
+        return $collection;
     }
 
     public function install(InstallContext $install){

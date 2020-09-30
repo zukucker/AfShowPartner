@@ -1,15 +1,10 @@
-window.onload = init;
+//$.subscribe('plugin/swCookieConsentManager/onBuildCookiePreferences', function(event, plugin, preferences){
+    //console.error("Do something like removing a cookie or displaying some warning regrading possible issues!");
+//});
 
-function init() {
-    var link = window.location.href;
-    var host = window.location.hostname;
-    var proto = window.location.protocol;
-    var partnerWith = link.replace(host, '')
-    var partner = partnerWith.replace(proto, '');
-    var partnerlink = (partner.substring(2,999));
+let hasPartnerTracking = $.getCookiePreference("partnertracking");
+console.error(hasPartnerTracking);
 
-    //console.error(partnerlink);
-    localStorage.setItem('partnerLink', JSON.stringify(partnerlink))
-
-    //console.error(localStorage);
+if(hasPartnerTracking){
+    alert("Cookie aktiv");
 }
