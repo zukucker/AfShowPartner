@@ -126,6 +126,7 @@ class AfShowPartner extends Plugin
             $partnerViewName = $this->getPartnerViewName($partnerId);
             $imageId = $this->getPartnerImage($partnerId);
             $sessionId = Shopware()->Session()->get("sessionId");
+
             $view->assign('afPartnerName', array(
                 'name' => $partnerViewName,
                 'image' => $imageId
