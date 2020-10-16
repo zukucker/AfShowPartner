@@ -87,7 +87,7 @@ class AfShowPartner extends Plugin
 
         $table = "CREATE TABLE `af_show_partner`
             ( `id` INT NOT NULL AUTO_INCREMENT , `partnerId` INT NOT NULL , `partnerLink` VARCHAR(255) NOT NULL ,
-            `name` VARCHAR(255) NOT NULL, `sessionId` INT NOT NULL,  PRIMARY KEY (`id`)) ENGINE = InnoDB";
+            `name` VARCHAR(255) NOT NULL, `sessionId` VARCHAR(255) NOT NULL,  PRIMARY KEY (`id`)) ENGINE = InnoDB";
 
         $connection->query($table);
     }
@@ -95,6 +95,8 @@ class AfShowPartner extends Plugin
     public function uninstall(UninstallContext $install){
         $service = $this->container->get('shopware_attribute.crud_service');
         $service->delete('s_emarketing_partner_attributes', 'afpartnerimage');
+        $connection = Shopware()->Db();
+        $connection->query("DROP TABLE af_show_partner");
     }
 
     public function onFrontend(\Enlight_Event_EventArgs $args){
