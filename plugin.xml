@@ -8,6 +8,11 @@
     <license>proprietary</license>
     <link>mailto:alexander.froehling@googlemail.com</link>
     <author>Alexander Froehling</author>
+    <description>
+        Marketing - Partnerprogramm
+        Hier einfach einen Partner anlegen unter den Freitextfeldern auf aktivieren gehen, Name hinterlegen und ein Bild.
+        Bei erfolgreichem Aufruf der Seite mit validem Namen wird das ganze im Frontend angezeigt.
+    </description>
 
     <compatibility minVersion="5.2.0" />
 
