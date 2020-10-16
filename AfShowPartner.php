@@ -40,11 +40,13 @@ class AfShowPartner extends Plugin
 
     public function addComfortCookie(): CookieCollection
     {
+        $pluginNamespace = $this->container->get('snippets')->getNamespace('my_plugins_snippet_namespace');
+
         $collection = new CookieCollection();
         $collection->add(new CookieStruct(
-            'partnertracking',
-            '/^partnertracking$/',
-            'Partneranzeige im Headbereich',
+            'allow_local_storage',
+            '/^match_no_cookie_DJ7ra9WMy8$/',
+            'Statistische Daten in den LocalStorage speichern',
             CookieGroupStruct::COMFORT
         ));
 
@@ -97,11 +99,15 @@ class AfShowPartner extends Plugin
 
     public function onFrontend(\Enlight_Event_EventArgs $args){
         $controller = $args->getSubject();
+        $connection = Shopware()->Db();
         $request = $args->getRequest();
         $view = $controller->View();
 
         $view->addTemplateDir($this->getPath() . "/Resources/views/");
         $view->Template()->addPluginsDir($this->getPath(). '/Resources/views/_private/smarty/');
+
+        $sessionId = Shopware()->Session()->get("sessionId");
+
 
         $partnerLink = $request->getRequestUri();
 
@@ -110,15 +116,20 @@ class AfShowPartner extends Plugin
             $partnerId = $this->checkIfHasName($partnerCode);
             $partnerViewName = $this->getPartnerViewName($partnerId);
             $imageId = $this->getPartnerImage($partnerId);
-            $sessionId = Shopware()->Session()->get("sessionId");
-            $view->assign('afPartnerName', array(
-                'name' => $partnerViewName,
-                'image' => $imageId
-                )
-            );
 
-            $this->writePartner($partnerId['0'], $partnerLink, $partnerViewName, $sessionId);
+            $required = array($partnerId['0'], $partnerLink, $partnerViewName);
+
+            foreach($required as $req){
+                if(!$req){
+                    $this->addPartnerToView($sessionId, $args);
+                    return;
+                }else{
+                    $this->writePartner($partnerId['0'], $partnerLink, $partnerViewName, $sessionId, $args);
+                }
+            }
         }
+
+        $this->addPartnerToView($sessionId, $args);
     }
 
     public function checkIfHasName($partnerCode){
@@ -145,14 +156,8 @@ class AfShowPartner extends Plugin
         return $imageId['0'];
     }
 
-    public function onCollectJs(){
-        $collection = new ArrayCollection();
-        $collection->add($this->getPath() . '/Resources/views/frontend/_public/src/js/main.js');
 
-        return $collection;
-    }
-
-    public function writePartner($partnerId, $partnerLink, $name, $sessionId){
+    public function writePartner($partnerId, $partnerLink, $name, $sessionId, $args){
         $connection = Shopware()->Db();
 
         $select = "SELECT * FROM af_show_partner WHERE sessionId = '".$sessionId."'";
@@ -163,8 +168,50 @@ class AfShowPartner extends Plugin
                 VALUES ( null, '".$partnerId."', '".$partnerLink."', '".$name."', '".$sessionId."')";
             $connection->query($insert);
         }else{
-            return;
+            $this->addPartnerToView($sessionId, $args);
         }
+
+    }
+
+    public function addPartnerToView($sessionId, $args){
+        $controller = $args->getSubject();
+        $view = $controller->View();
+
+
+        $connection = Shopware()->Db();
+        $partnerDbDetails = $connection->fetchRow("SELECT partnerid, name, sessionId FROM af_show_partner WHERE sessionId = '".$sessionId."'");
+        if($sessionId == $partnerDbDetails['sessionId']){
+
+            $partnerViewName = $this->getPartnerViewName($partnerDbDetails['partnerid']);
+            $imageId = $this->getPartnerImage($partnerDbDetails['partnerid']);
+
+            $view->assign('afPartnerName', array(
+                'name' => $partnerViewName,
+                'image' => $imageId
+                )
+            );
+        }
+    }
+
+    public function getDebug()
+    {
+        $connection = Shopware()->Db();
+        $sessionId = Shopware()->Session()->get("sessionId");
+
+        $partnerTable = $connection->fetchAll("SELECT * FROM af_show_partner");
+
+        $debugData = array(
+            "sessionId" => $sessionId,
+            "partnerTable" => $partnerTable,
+        );
+        return $debugData;
+    }
+
+    public function onCollectJs(){
+        $collection = new ArrayCollection();
+        $collection->add($this->getPath() . '/Resources/views/frontend/_public/src/js/main.js');
+
+        return $collection;
     }
 
     public function onCollectLess()
