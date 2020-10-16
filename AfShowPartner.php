@@ -32,7 +32,6 @@ class AfShowPartner extends Plugin
     public static function getSubscribedEvents(){
         return[
             'Enlight_Controller_Action_PostDispatch_Frontend' => 'onFrontend',
-            'Theme_Compiler_Collect_Plugin_Javascript' => 'onCollectJs',
             'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLess',
             'CookieCollector_Collect_Cookies' => 'addComfortCookie',
         ];
@@ -207,13 +206,6 @@ class AfShowPartner extends Plugin
             "partnerTable" => $partnerTable,
         );
         return $debugData;
-    }
-
-    public function onCollectJs(){
-        $collection = new ArrayCollection();
-        $collection->add($this->getPath() . '/Resources/views/frontend/_public/src/js/main.js');
-
-        return $collection;
     }
 
     public function onCollectLess()
