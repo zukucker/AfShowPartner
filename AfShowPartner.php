@@ -34,6 +34,7 @@ class AfShowPartner extends Plugin
             'Enlight_Controller_Action_PostDispatch_Frontend' => 'onFrontend',
             'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLess',
             'CookieCollector_Collect_Cookies' => 'addComfortCookie',
+            //'Shopware_Modules_Order_SendMail_FilterVariables' => 'sendOrderMail',
         ];
     }
 
@@ -193,6 +194,19 @@ class AfShowPartner extends Plugin
             );
         }
     }
+
+    //public function sendOrderMail(\Enlight_Event_EventArgs $args)
+    //{
+        //$connection = Shopware()->Db();
+
+        //$variables = $args->getReturn();
+        //$sessionID =  $variables["sOrderDetails"]['sessionID'];
+        //$getPartner = "SELECT name FROM af_show_partner WHERE sessionId = '".$sessionID."'";
+        //$partner = $connection->query($getPartner);
+        //$variables["sOrderDetails"]['partner_name'] = $partner;
+
+        //return $variables;
+    //}
 
     public function getDebug()
     {
