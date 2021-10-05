@@ -37,6 +37,7 @@ class AfShowPartner extends Plugin
         ];
     }
 
+    // hatte damals mit cookies getestet aber wie gesagt es hat sich der jenige dann nicht mehr gemeldet
     //public function addComfortCookie(): CookieCollection
     //{
         //$pluginNamespace = $this->container->get('snippets')->getNamespace('my_plugins_snippet_namespace');
@@ -52,6 +53,7 @@ class AfShowPartner extends Plugin
         //return $collection;
     //}
 
+    //hier werden die nötigen freitextfelder angelegt im partner menue
     public function install(InstallContext $install){
         $service = $this->container->get('shopware_attribute.crud_service');
         $connection = Shopware()->Db();
@@ -174,6 +176,10 @@ class AfShowPartner extends Plugin
 
     }
 
+    // wenn alles funktioniert hat wird hier dem template das Array AfPartnerName zugewiesen -> dort findet sich dann der name und das image
+    // die kann man dann dementsprechend auslesen bzw. ausgeben
+    // in einem der älteren commits sieht man das auch
+    // da nur die img id gespeichert wird, hab ich den smarty modifier angelegt mit dem man ganz einfach per |mediaurl dann den link erhählt
     public function addPartnerToView($sessionId, $args){
         $controller = $args->getSubject();
         $view = $controller->View();
@@ -186,7 +192,7 @@ class AfShowPartner extends Plugin
             $partnerViewName = $this->getPartnerViewName($partnerDbDetails['partnerid']);
             $imageId = $this->getPartnerImage($partnerDbDetails['partnerid']);
 
-            $view->assign('afPartnerName', array(
+            $view->assign('AfPartnerName', array(
                 'name' => $partnerViewName,
                 'image' => $imageId
                 )
@@ -194,6 +200,7 @@ class AfShowPartner extends Plugin
         }
     }
 
+    // reine debug funktion für mich
     //public function getDebug()
     //{
         //$connection = Shopware()->Db();
