@@ -8,10 +8,10 @@ use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/** Cookie Stuff */
-use Shopware\Bundle\CookieBundle\CookieCollection;
-use Shopware\Bundle\CookieBundle\Structs\CookieGroupStruct;
-use Shopware\Bundle\CookieBundle\Structs\CookieStruct;
+//Cookie Stuff 
+//use Shopware\Bundle\CookieBundle\CookieCollection;
+//use Shopware\Bundle\CookieBundle\Structs\CookieGroupStruct;
+//use Shopware\Bundle\CookieBundle\Structs\CookieStruct;
 
 
 /**
@@ -33,24 +33,24 @@ class AfShowPartner extends Plugin
         return[
             'Enlight_Controller_Action_PostDispatch_Frontend' => 'onFrontend',
             'Theme_Compiler_Collect_Plugin_Less' => 'onCollectLess',
-            'CookieCollector_Collect_Cookies' => 'addComfortCookie',
+            //'CookieCollector_Collect_Cookies' => 'addComfortCookie',
         ];
     }
 
-    public function addComfortCookie(): CookieCollection
-    {
-        $pluginNamespace = $this->container->get('snippets')->getNamespace('my_plugins_snippet_namespace');
+    //public function addComfortCookie(): CookieCollection
+    //{
+        //$pluginNamespace = $this->container->get('snippets')->getNamespace('my_plugins_snippet_namespace');
 
-        $collection = new CookieCollection();
-        $collection->add(new CookieStruct(
-            'allow_local_storage',
-            '/^match_no_cookie_DJ7ra9WMy8$/',
-            'Statistische Daten in den LocalStorage speichern',
-            CookieGroupStruct::COMFORT
-        ));
+        //$collection = new CookieCollection();
+        //$collection->add(new CookieStruct(
+            //'allow_local_storage',
+            //'/^match_no_cookie_DJ7ra9WMy8$/',
+            //'Statistische Daten in den LocalStorage speichern',
+            //CookieGroupStruct::COMFORT
+        //));
 
-        return $collection;
-    }
+        //return $collection;
+    //}
 
     public function install(InstallContext $install){
         $service = $this->container->get('shopware_attribute.crud_service');
@@ -194,19 +194,19 @@ class AfShowPartner extends Plugin
         }
     }
 
-    public function getDebug()
-    {
-        $connection = Shopware()->Db();
-        $sessionId = Shopware()->Session()->get("sessionId");
+    //public function getDebug()
+    //{
+        //$connection = Shopware()->Db();
+        //$sessionId = Shopware()->Session()->get("sessionId");
 
-        $partnerTable = $connection->fetchAll("SELECT * FROM af_show_partner");
+        //$partnerTable = $connection->fetchAll("SELECT * FROM af_show_partner");
 
-        $debugData = array(
-            "sessionId" => $sessionId,
-            "partnerTable" => $partnerTable,
-        );
-        return $debugData;
-    }
+        //$debugData = array(
+            //"sessionId" => $sessionId,
+            //"partnerTable" => $partnerTable,
+        //);
+        //return $debugData;
+    //}
 
     public function onCollectLess()
     {
