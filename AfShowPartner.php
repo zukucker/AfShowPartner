@@ -115,7 +115,14 @@ class AfShowPartner extends Plugin
         $partnerLink = $request->getRequestUri();
 
         if(strpos($partnerLink, '/?sPartner') !== false){
-            $partnerCode = str_replace("/?sPartner=", "", $partnerLink);
+            if(str_contains($partnerLink, "/staging/")){
+              $pCode = str_replace("/staging/", "", $partnerLink);
+              $partnerCode = str_replace("?sPartner=", "", $pCode);
+            }else{
+              $partnerCode = str_replace("/?sPartner=", "", $partnerLink);
+            }
+
+
             $partnerId = $this->checkIfHasName($partnerCode);
             $partnerViewName = $this->getPartnerViewName($partnerId);
             $imageId = $this->getPartnerImage($partnerId);
